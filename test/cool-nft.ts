@@ -11,12 +11,21 @@ describe("cool-nft contract test suite", () => {
     await coolClient.checkContract();
   });
   describe("deploying an instance of the contract", () => {
-    const getCounter = async () => {
+    const getLastTokenId = async () => {
       const query = coolClient.createQuery({
-        method: { name: "get-counter", args: [] }
+        method: { name: "get-last-token-id", args: [] }
       });
       const receipt = await coolClient.submitQuery(query);
-      const result = Result.unwrapInt(receipt);
+      const result = Result.unwrapUInt(receipt);
+      return result;
+    }
+    const getOwner = async () => {
+      const query = coolClient.createQuery({
+        method: { name: "get-owner", args: ['u1'] }
+      });
+      const receipt = await coolClient.submitQuery(query);
+			console.log({receipt})
+      const result = Result.unwrap(receipt);
       return result;
     }
     const execMethod = async (method: string) => {
@@ -33,9 +42,13 @@ describe("cool-nft contract test suite", () => {
     before(async () => {
       await coolClient.deployContract();
     });
-    it("should start at zero", async () => {
-      const cool = await getCounter();
-      assert.equal(cool, 0);
+    it("last nft is 1", async () => {
+      const cool = await getLastTokenId();
+      assert.equal(cool, 1);
+    })
+    it("owner of 1 is me", async () => {
+      const cool = await getOwner();
+      assert.equal(cool, '(ok (some SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB))');
     })
   });
   after(async () => {
