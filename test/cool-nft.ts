@@ -1,5 +1,8 @@
 import { Client, Provider, ProviderRegistry, Result } from "@blockstack/clarity";
 import { assert } from "chai";
+  function toHexString(input: String): String {
+    return Buffer.from(input).toString('hex');
+  };
 describe("cool-nft contract test suite", () => {
   let coolClient: Client;
   let provider: Provider;
@@ -28,6 +31,18 @@ describe("cool-nft contract test suite", () => {
       const result = Result.unwrap(receipt);
       return result;
     }
+    const execTransfer = async () => {
+		// const sender = `0x${toHexString('SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB')}`
+		const sender = `SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB`
+		console.log({sender})
+      const query = coolClient.createQuery({
+        method: { name: "transfer", args: ['u1', sender, sender] }
+      });
+      const receipt = await coolClient.submitQuery(query);
+			console.log({receipt})
+      const result = Result.unwrap(receipt);
+      return result;
+    }
     const execMethod = async (method: string) => {
       const tx = coolClient.createTransaction({
         method: {
@@ -48,6 +63,10 @@ describe("cool-nft contract test suite", () => {
     })
     it("owner of 1 is me", async () => {
       const cool = await getOwner();
+      assert.equal(cool, '(ok (some SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB))');
+    })
+    it("can transfer", async () => {
+      const cool = await execTransfer();
       assert.equal(cool, '(ok (some SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB))');
     })
   });

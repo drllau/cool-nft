@@ -1,0 +1,11 @@
+cant figure out how to include the int type
+	error
+		lost
+	solution
+		use a string e.g., 'u1'
+
+
+can't figure out how to include the sender type
+	error
+	     ExecutionError: Eval expression on contract failed with bad exit code 1: Program execution error:
+Unchecked(UndefinedVariable("SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB"))
