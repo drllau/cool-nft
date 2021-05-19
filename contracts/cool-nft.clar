@@ -46,3 +46,12 @@
 ;; Initialize the contract
 (try! (nft-mint? cool-nft  u1 tx-sender))
 
+
+(define-public (claim (token-id uint))
+  (if (and
+        (is-eq nft-not-found-err (unwrap! (nft-get-owner? cool-nft token-id) nft-not-found-err))
+				)
+       (match (nft-mint?  cool-nft token-id sender recipient)
+        success (ok success)
+        error (nft-transfer-err error))
+      nft-not-owned-err))
