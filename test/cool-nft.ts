@@ -1,14 +1,17 @@
 import { Client, Provider, ProviderRegistry, Result } from "@blockstack/clarity";
 import { assert } from "chai";
-  function toHexString(input: String): String {
-    return Buffer.from(input).toString('hex');
-  };
+
+const sendAddress = "SP4FZCYV4NQ6BGDT75S75H1W9D0SXMF39F2X21R9"
+const sendKey = "2bcfb132a17ec597975a7cb1efc80be5e409d7b3154ec0884ef8088f1ace1af201"
+const recvAddress = "SPE6KGKEPW6QS8EXT9CAW40AHQ1PNB40K0J554ED"
+const recvKey = "8575f14c6e5d0e0bdaca0a895af7484b39ad596094b11cb5d6ca6ee4e74af89301"
+
 describe("cool-nft contract test suite", () => {
   let coolClient: Client;
   let provider: Provider;
   before(async () => {
     provider = await ProviderRegistry.createProvider();
-    coolClient = new Client("SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB.cool-nft", "cool-nft", provider);
+    coolClient = new Client(`${sendAddress}.cool-nft`, "cool-nft", provider);
   });
   it("should have a valid syntax", async () => {
     await coolClient.checkContract();
@@ -32,13 +35,14 @@ describe("cool-nft contract test suite", () => {
       return result;
     }
     const execTransfer = async () => {
-		// const sender = `0x${toHexString('SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB')}`
-		const sender = `SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB`
+		const sender = `'${sendAddress}`
+		const receiver = `'${recvAddress}`
 		console.log({sender})
-      const query = coolClient.createQuery({
-        method: { name: "transfer", args: ['u1', sender, sender] }
+      const tx = coolClient.createTransaction({
+        method: { name: "transfer", args: ['u1', sender, receiver] }
       });
-      const receipt = await coolClient.submitQuery(query);
+      await tx.sign(sendAddress);
+      const receipt = await coolClient.submitTransaction(tx);
 			console.log({receipt})
       const result = Result.unwrap(receipt);
       return result;
@@ -50,7 +54,7 @@ describe("cool-nft contract test suite", () => {
           args: [],
         },
       });
-      await tx.sign("SP2J6ZY48GV1EZ5V2V5RB9MP66SW86PYKKNRV9EJ7");
+      await tx.sign(sendAddress);
       const receipt = await coolClient.submitTransaction(tx);
       return receipt;
     }
@@ -63,12 +67,19 @@ describe("cool-nft contract test suite", () => {
     })
     it("owner of 1 is me", async () => {
       const cool = await getOwner();
-      assert.equal(cool, '(ok (some SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB))');
+      assert.equal(cool, `(ok (some ${sendAddress}))`);
     })
     it("can transfer", async () => {
-      const cool = await execTransfer();
-      assert.equal(cool, '(ok (some SP3GWX3NE58KXHESRYE4DYQ1S31PQJTCRXB3PE9SB))');
+      const cool = await getOwner();
+      assert.equal(cool, `(ok (some ${sendAddress}))`);
+      const cool1 = await execTransfer();
+			console.log({cool1})
+      assert.equal(cool1, 'Transaction executed and committed. Returned: true\n' +
+    '[NFTEvent(NFTTransferEvent(NFTTransferEventData { asset_identifier: AssetIdentifier { contract_identifier: QualifiedContractIdentifier { issuer: StandardPrincipalData(SP4FZCYV4NQ6BGDT75S75H1W9D0SXMF39F2X21R9), name: ContractName("cool-nft") }, asset_name: ClarityName("cool-nft") }, sender: Standard(StandardPrincipalData(SP4FZCYV4NQ6BGDT75S75H1W9D0SXMF39F2X21R9)), recipient: Standard(StandardPrincipalData(SPE6KGKEPW6QS8EXT9CAW40AHQ1PNB40K0J554ED)), value: UInt(1) }))]');
+      const cool3 = await getOwner();
+      assert.equal(cool3, `(ok (some ${recvAddress}))`);
     })
+
   });
   after(async () => {
     await provider.close();

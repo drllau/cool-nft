@@ -17,9 +17,10 @@
 ;; Transfers tokens to a specified principal.
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
   (if (and
-        (is-eq tx-sender (unwrap! (nft-get-owner? cool-nft token-id) nft-not-found-err))
+        (is-eq sender (unwrap! (nft-get-owner? cool-nft token-id) nft-not-found-err))
         (is-eq tx-sender sender)
-        (not (is-eq recipient sender)))
+        (not (is-eq recipient sender))
+				)
        (match (nft-transfer?  cool-nft token-id sender recipient)
         success (ok success)
         error (nft-transfer-err error))
