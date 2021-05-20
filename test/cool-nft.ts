@@ -80,36 +80,36 @@ describe("cool-nft contract test suite", () => {
             const cool = await getOwner();
             assert.equal(cool, `(ok (some ${sendAddress}))`);
         })
-        //        it("can transfer", async () => {
-        //            const execTransfer = async () => {
-        //                const sender = `'${sendAddress}`
-        //                const receiver = `'${recvAddress}`
-        //                console.log({
-        //                    sender
-        //                })
-        //                const tx = coolClient.createTransaction({
-        //                    method: {
-        //                        name: "transfer",
-        //                        args: ['u1', sender, receiver]
-        //                    }
-        //                });
-        //                await tx.sign(sendAddress);
-        //                const receipt = await coolClient.submitTransaction(tx);
-        //                console.log({
-        //                    receipt
-        //                })
-        //                const result = Result.unwrap(receipt);
-        //                return result;
-        //            }
-        //            const cool1 = await execTransfer();
-        //            console.log({
-        //                cool1
-        //            })
-        //            assert.equal(cool1, 'Transaction executed and committed. Returned: true\n' +
-        //                '[NFTEvent(NFTTransferEvent(NFTTransferEventData { asset_identifier: AssetIdentifier { contract_identifier: QualifiedContractIdentifier { issuer: StandardPrincipalData(SP4FZCYV4NQ6BGDT75S75H1W9D0SXMF39F2X21R9), name: ContractName("cool-nft") }, asset_name: ClarityName("cool-nft") }, sender: Standard(StandardPrincipalData(SP4FZCYV4NQ6BGDT75S75H1W9D0SXMF39F2X21R9)), recipient: Standard(StandardPrincipalData(SPE6KGKEPW6QS8EXT9CAW40AHQ1PNB40K0J554ED)), value: UInt(1) }))]');
-        //            const cool3 = await getOwner();
-        //            assert.equal(cool3, `(ok (some ${recvAddress}))`);
-        //        })
+        it("can transfer", async () => {
+            const execTransfer = async () => {
+                const sender = `'${sendAddress}`
+                const receiver = `'${recvAddress}`
+                console.log({
+                    sender
+                })
+                const tx = coolClient.createTransaction({
+                    method: {
+                        name: "transfer",
+                        args: ['u1', sender, receiver]
+                    }
+                });
+                await tx.sign(sendAddress);
+                const receipt = await coolClient.submitTransaction(tx);
+                console.log({
+                    receipt
+                })
+                const result = Result.unwrap(receipt);
+                return result;
+            }
+            const cool1 = await execTransfer();
+            console.log({
+                cool1
+            })
+            assert.equal(cool1, 'Transaction executed and committed. Returned: true\n' +
+                '[NFTEvent(NFTTransferEvent(NFTTransferEventData { asset_identifier: AssetIdentifier { contract_identifier: QualifiedContractIdentifier { issuer: StandardPrincipalData(SP4FZCYV4NQ6BGDT75S75H1W9D0SXMF39F2X21R9), name: ContractName("cool-nft") }, asset_name: ClarityName("cool-nft") }, sender: Standard(StandardPrincipalData(SP4FZCYV4NQ6BGDT75S75H1W9D0SXMF39F2X21R9)), recipient: Standard(StandardPrincipalData(SPE6KGKEPW6QS8EXT9CAW40AHQ1PNB40K0J554ED)), value: UInt(1) }))]');
+            const cool3 = await getOwner();
+            assert.equal(cool3, `(ok (some ${recvAddress}))`);
+        })
         it("can claim", async () => {
             const execClaim = async () => {
                 const sender = `'${sendAddress}`
