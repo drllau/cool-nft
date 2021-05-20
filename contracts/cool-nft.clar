@@ -48,10 +48,14 @@
 
 
 (define-public (claim (token-id uint))
-  (if (and
-        (is-eq nft-not-found-err (unwrap! (nft-get-owner? cool-nft token-id) nft-not-found-err))
-				)
-       (match (nft-mint?  cool-nft token-id sender recipient)
+	(begin
+		;; (print (unwrap! (nft-get-owner? cool-nft token-id) nft-not-found-err))
+		;; (print (nft-get-owner? cool-nft token-id))
+		(print (is-eq none (nft-get-owner? cool-nft u10)))
+		(if
+			(is-eq none (nft-get-owner? cool-nft token-id))
+      (match (nft-mint?  cool-nft token-id tx-sender)
         success (ok success)
         error (nft-transfer-err error))
-      nft-not-owned-err))
+			nft-not-owned-err)
+			))
